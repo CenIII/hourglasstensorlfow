@@ -371,7 +371,7 @@ class HourglassModel():
         norm_factor = tf.expand_dims(tf.sqrt(tf.reduce_sum(tf.square(output_no0),3)), -1)
         norm_output = tf.divide(output_no0,norm_factor)
 
-
+        y = x
         # Just XiaJB test
         z_mask = mask
         a11=tf.boolean_mask(tf.reduce_sum(tf.square(norm_output),3),z_mask)
