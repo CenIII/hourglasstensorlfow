@@ -12,13 +12,13 @@ class SFSDataProvider(object):
         self.images, self.mask, self.normal =self._load_and_format_data()
         self.image_num = self.images.shape[0]
     def _load_and_format_data(self):
-        color_dir = '/home/shensq/eecs442challenge/train/color/'
+        color_dir = '/home/shensq/eecs442challenge/minitrain/color/'
         color,_ = self._load_data(color_dir)
 
-        mask_dir = '/home/shensq/eecs442challenge/train/mask/'
+        mask_dir = '/home/shensq/eecs442challenge/minitrain/mask/'
         mask,_ = self._load_data(mask_dir)
 
-        normal_dir = '/home/shensq/eecs442challenge/train/normal'
+        normal_dir = '/home/shensq/eecs442challenge/minitrain/normal'
         normal,_ = self._load_data(normal_dir)
 
         images = np.zeros((len(color),128,128,3),dtype='f')
