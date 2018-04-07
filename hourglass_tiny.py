@@ -363,23 +363,24 @@ class HourglassModel():
 
         tmp = 0
         count = 0.
-        output = self.output[:,3,:,:,:]
-        
-        output = (output/255.0-0.5)*2
-        output_mask = tf.abs(output) < 1e-5
-        output_no0 = tf.where(output_mask, 1e-5*tf.ones_like(output), output)
-        norm_factor = tf.expand_dims(tf.sqrt(tf.reduce_sum(tf.square(output_no0),3)), -1)
-        norm_output = tf.divide(output_no0,norm_factor)
-
         y = x
-        # Just XiaJB test
         z_mask = mask
-        a11=tf.boolean_mask(tf.reduce_sum(tf.square(norm_output),3),z_mask)
-        a22=tf.boolean_mask(tf.reduce_sum(tf.square(y),3),z_mask)
-        a12=tf.boolean_mask(tf.reduce_sum(tf.multiply(y,norm_output),3),z_mask)
-        cos_dist = tf.clip_by_value(tf.where(tf.is_nan(a12 / tf.sqrt(tf.multiply(a11,a22))), -1*tf.ones_like(a12 / tf.sqrt(tf.multiply(a11,a22))), a12 / tf.sqrt(tf.multiply(a11,a22))), -1, 1)
-        loss = tf.reduce_mean(3.1415926/2-(cos_dist+tf.pow(cos_dist,3)/6+tf.pow(cos_dist,5)*3/40+tf.pow(cos_dist,7)*15/336+tf.pow(cos_dist,9)*105/3456))
-        count = loss
+        for i in range(self.nStack):
+            output = self.output[:,i,:,:,:]
+            
+            output = (output/255.0-0.5)*2
+            output_mask = tf.abs(output) < 1e-5
+            output_no0 = tf.where(output_mask, 1e-5*tf.ones_like(output), output)
+            norm_factor = tf.expand_dims(tf.sqrt(tf.reduce_sum(tf.square(output_no0),3)), -1)
+            norm_output = tf.divide(output_no0,norm_factor)
+
+            a11=tf.boolean_mask(tf.reduce_sum(tf.square(norm_output),3),z_mask)
+            a22=tf.boolean_mask(tf.reduce_sum(tf.square(y),3),z_mask)
+            a12=tf.boolean_mask(tf.reduce_sum(tf.multiply(y,norm_output),3),z_mask)
+            cos_dist = tf.clip_by_value(tf.where(tf.is_nan(a12 / tf.sqrt(tf.multiply(a11,a22))), -1*tf.ones_like(a12 / tf.sqrt(tf.multiply(a11,a22))), a12 / tf.sqrt(tf.multiply(a11,a22))), -1, 1)
+            loss_i = tf.reduce_mean(3.1415926/2-(cos_dist+tf.pow(cos_dist,3)/6+tf.pow(cos_dist,5)*3/40+tf.pow(cos_dist,7)*15/336+tf.pow(cos_dist,9)*105/3456))
+            loss += loss_i
+            count = loss_i
         # for i in range(self.nStack):
         #     # y = y_stack[:,i,:,:,:]
 
