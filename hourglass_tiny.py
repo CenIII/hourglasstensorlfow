@@ -222,6 +222,33 @@ class HourglassModel():
                     print('Model Loaded (', time.time() - t,' sec.)')
                 else:
                     print('Please give a Model in args (see README for further information)')
+ 
+    def _test(self,data_gen,batchSize = 16):
+        with tf.name_scope("test"):
+            img_test, gt_test,mask_test = data_gen(batchSize)
+            weight_train = 0
+            _, loss_total,loss_final = self.Session.run([self.train_rmsprop, self.loss, self.loss_out], feed_dict = {self.img : img_test, self.gtMaps: gt_test, self.mask: mask_test})
+
+            print("Cost of all layers:"+str(loss_total))
+            print("Cost of the last layer: "+str(loss_final))
+    
+    def test_init(self, data_gen, nEpochs = 1, epochSize = 1000, batchSize=20, saveStep = 500, load = None):
+        """ Initialize the training
+        Args:
+            nEpochs		: Number of Epochs to train
+            epochSize		: Size of one Epoch
+            saveStep		: Step to save 'train' summary (has to be lower than epochSize)
+            dataset		: Data Generator (see generator.py)
+            load			: Model to load (None if training from scratch) (see README for further information)
+        """
+        with tf.name_scope('Session'):
+            with tf.device(self.gpu):
+                self._init_weight()
+                self._define_saver_summary()
+                if load is not None:
+                    self.saver.restore(self.Session, load)
+
+                self._test(data_gen,batchSize)
 
     def _train(self, data_gen, nEpochs = 10, epochSize = 1000, batchSize=20, saveStep = 500, validIter = 10):
         """
@@ -314,7 +341,8 @@ class HourglassModel():
             out_file.write(out_string)
         out_file.close()
         print('Training Record Saved')
-            
+
+
     def training_init(self, data_gen, nEpochs = 10, epochSize = 1000, batchSize=20, saveStep = 500, load = None):
         """ Initialize the training
         Args:

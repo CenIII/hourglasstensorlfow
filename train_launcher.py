@@ -43,8 +43,12 @@ if __name__ == '__main__':
 	# dataset._create_sets()
 	
 	data_gen = DataGenerator()
-
-	model = HourglassModel(nFeat=256, nStack=4, nLow=4, outputDim=3, batch_size=16,training=True, drop_rate=0.2, lear_rate=2.5*1e-4, decay=0.96, decay_step=1000,logdir_train='./logdir_train', logdir_test='./logdir_test', tiny=True, w_loss=False,modif=False)
-	model.generate_model()
-	model.training_init(data_gen, nEpochs = 50, epochSize = 1000, batchSize=16, saveStep = 500, load = None)
-
+	training = True
+	if training==True:
+		model = HourglassModel(nFeat=256, nStack=4, nLow=4, outputDim=3, batch_size=16,training=True, drop_rate=0.2, lear_rate=2.5*1e-4, decay=0.96, decay_step=1000,logdir_train='./logdir_train', logdir_test='./logdir_test', tiny=True, w_loss=False,modif=False)
+		model.generate_model()
+		model.training_init(data_gen, nEpochs = 50, epochSize = 1000, batchSize=16, saveStep = 500, load = None)
+	else:
+		model_test = HourglassModel(nFeat=256, nStack=4, nLow=4, outputDim=3, batch_size=16,training=False, drop_rate=0.2, lear_rate=2.5*1e-4, decay=0.96, decay_step=1000,logdir_train='./logdir_train', logdir_test='./logdir_test', tiny=True, w_loss=False,modif=False)
+		model_test.generate_model()
+		model_test.test_init(data_gen, nEpochs = 1, epochSize = 1000, batchSize=1000, saveStep = 500, load = "path/to/save")
