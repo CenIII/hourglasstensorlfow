@@ -234,6 +234,7 @@ class HourglassModel():
             self.resume['accur'] = []
             self.resume['loss'] = []
             self.resume['err'] = []
+            c = 0.
             for epoch in range(nEpochs):
                 epochstartTime = time.time()
                 avg_cost = 0.
