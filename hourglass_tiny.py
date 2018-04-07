@@ -139,6 +139,7 @@ class HourglassModel():
                     self.weights = tf.placeholder(dtype = tf.float32, shape = (None, self.outDim))
                 # Shape Ground Truth Map: batchSize x nStack x 128 x 128 x outDim
                 self.gtMaps = tf.placeholder(dtype = tf.float32, shape = (None, 128, 128, 3))#self.nStack, 128, 128, 3))
+                self.mask = tf.placeholder(dtype= tf.float32, shape= (None, 128, 128))
             inputTime = time.time()
             print('---Inputs : Done (' + str(int(abs(inputTime-startTime))) + ' sec.)')
             
@@ -253,7 +254,7 @@ class HourglassModel():
                         if self.w_loss:
                             _, c, summary = self.Session.run([self.train_rmsprop, self.loss, self.train_op], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
                         else:
-                            _, c, summary = self.Session.run([self.train_rmsprop, self.loss, self.train_op], feed_dict = {self.img : img_train, self.gtMaps: gt_train})
+                            _, c, summary = self.Session.run([self.train_rmsprop, self.loss, self.train_op], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.mask: mask_train})
                         # Save summary (Loss + Accuracy)
                         self.train_summary.add_summary(summary, epoch*epochSize + i)
                         self.train_summary.flush()
