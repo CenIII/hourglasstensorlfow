@@ -177,8 +177,8 @@ class HourglassModel():
 
     # Define optimizer TODO: change to Adam
         with tf.device(self.gpu):
-            with tf.name_scope('rmsprop'):
-                self.rmsprop = tf.train.RMSPropOptimizer(learning_rate= self.lr)
+            with tf.name_scope('adam'):
+                self.rmsprop = tf.train.AdamOptimizer(learning_rate= self.lr)
             optimTime = time.time()
             print('---Optim : Done (' + str(int(abs(optimTime-lrTime))) + ' sec.)')
             with tf.name_scope('minimizer'):
