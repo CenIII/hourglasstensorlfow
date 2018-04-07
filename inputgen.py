@@ -2,9 +2,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 import os
 import skimage.data
 import numpy as np
-from Net.input_util import BaseDataProvider, normalize_d2f
 from skimage.filters import sobel #, scharr, prewitt,roberts 
-
 
 class SFSDataProvider(object):
     channels = 3
@@ -67,3 +65,7 @@ class SFSDataProvider(object):
             X[i] = train_data
             Y[i] = labels
         return X, Y
+
+
+def normalize_d2f(image):
+    return (image/255.0-0.5)*2
