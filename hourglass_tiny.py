@@ -512,7 +512,7 @@ class HourglassModel():
                     # r3 = self._residual(pool1, numOut=self.nFeat, name='r3')
                     r3 = self._residual(r1, numOut=self.nFeat, name='r3')
                 else:
-                    r2 = self._residual(pool1, numOut= int(self.nFeat/2), name = 'r2')
+                    r2 = self._residual(r1, numOut= int(self.nFeat/2), name = 'r2')
                     r3 = self._residual(r2, numOut= self.nFeat, name = 'r3')
             # Storage Table
             hg = [None] * self.nStack
