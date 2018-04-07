@@ -78,7 +78,7 @@ class HourglassModel():
         self.logdir_train = logdir_train
         self.logdir_test = logdir_test
         self.w_loss = False
-        
+
     # ACCESSOR
 
     def get_input(self):
@@ -413,7 +413,8 @@ class HourglassModel():
         """
         print('Session initialization')
         t_start = time.time()
-        self.Session = tf.Session()
+        config = tf.ConfigProto(allow_soft_placement = True)
+        self.Session = tf.Session(config = config)
         print('Sess initialized in ' + str(int(time.time() - t_start)) + ' sec.')
         
     def _graph_hourglass(self, inputs):
