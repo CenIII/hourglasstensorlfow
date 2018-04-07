@@ -363,32 +363,49 @@ class HourglassModel():
 
         tmp = 0
         count = 0.
-        for i in range(self.nStack):
-            # y = y_stack[:,i,:,:,:]
-
-            output = y_stack[:,i,:,:,:]
-            output = (output/255.0-0.5)*2
-            output_mask = tf.abs(output) < 1e-5
-            output_no0 = tf.where(output_mask, 1e-5*tf.ones_like(output), output)
-            norm_factor = tf.expand_dims(tf.sqrt(tf.reduce_sum(tf.square(output_no0),3)), -1)
-            y = tf.divide(output_no0,norm_factor)
+        output = self.output[:,3,:,:,:]
+        
+        output = (output/255.0-0.5)*2
+        output_mask = tf.abs(output) < 1e-5
+        output_no0 = tf.where(output_mask, 1e-5*tf.ones_like(output), output)
+        norm_factor = tf.expand_dims(tf.sqrt(tf.reduce_sum(tf.square(output_no0),3)), -1)
+        norm_output = tf.divide(output_no0,norm_factor)
 
 
-            b = tf.reduce_sum(tf.square(y),3)
-            ab = tf.reduce_sum(tf.multiply(x,y),3)
-            b_m = tf.boolean_mask(b,mask)
-            ab_m = tf.boolean_mask(ab,mask)
+        # Just XiaJB test
+        z_mask = mask
+        a11=tf.boolean_mask(tf.reduce_sum(tf.square(norm_output),3),z_mask)
+        a22=tf.boolean_mask(tf.reduce_sum(tf.square(y),3),z_mask)
+        a12=tf.boolean_mask(tf.reduce_sum(tf.multiply(y,norm_output),3),z_mask)
+        cos_dist = tf.clip_by_value(tf.where(tf.is_nan(a12 / tf.sqrt(tf.multiply(a11,a22))), -1*tf.ones_like(a12 / tf.sqrt(tf.multiply(a11,a22))), a12 / tf.sqrt(tf.multiply(a11,a22))), -1, 1)
+        loss = tf.reduce_mean(3.1415926/2-(cos_dist+tf.pow(cos_dist,3)/6+tf.pow(cos_dist,5)*3/40+tf.pow(cos_dist,7)*15/336+tf.pow(cos_dist,9)*105/3456))
+     
+        # for i in range(self.nStack):
+        #     # y = y_stack[:,i,:,:,:]
+
+        #     output = y_stack[:,i,:,:,:]
+        #     output = (output/255.0-0.5)*2
+        #     output_mask = tf.abs(output) < 1e-5
+        #     output_no0 = tf.where(output_mask, 1e-5*tf.ones_like(output), output)
+        #     norm_factor = tf.expand_dims(tf.sqrt(tf.reduce_sum(tf.square(output_no0),3)), -1)
+        #     y = tf.divide(output_no0,norm_factor)
+
+
+        #     b = tf.reduce_sum(tf.square(y),3)
+        #     ab = tf.reduce_sum(tf.multiply(x,y),3)
+        #     b_m = tf.boolean_mask(b,mask)
+        #     ab_m = tf.boolean_mask(ab,mask)
             
-            cos_dist = ab_m/tf.sqrt(tf.multiply(a_m,b_m))
+        #     cos_dist = ab_m/tf.sqrt(tf.multiply(a_m,b_m))
 
-            # assign 1 if it is NAN
-            cos_tmp = tf.where(tf.is_nan(cos_dist),tf.ones_like(cos_dist),tf.zeros_like(cos_dist))
-            count = tf.reduce_mean(cos_tmp)
+        #     # assign 1 if it is NAN
+        #     cos_tmp = tf.where(tf.is_nan(cos_dist),tf.ones_like(cos_dist),tf.zeros_like(cos_dist))
+        #     count = tf.reduce_mean(cos_tmp)
 
-            cos_dist = tf.where(tf.is_nan(cos_dist),-1*tf.ones_like(cos_dist),cos_dist)
-            cos_dist = tf.clip_by_value(cos_dist,-1,1)
-            tmp = tf.reduce_mean(tf.acos(cos_dist))
-            loss += tmp
+        #     cos_dist = tf.where(tf.is_nan(cos_dist),-1*tf.ones_like(cos_dist),cos_dist)
+        #     cos_dist = tf.clip_by_value(cos_dist,-1,1)
+        #     tmp = tf.reduce_mean(tf.acos(cos_dist))
+        #     loss += tmp
         return loss,count
 
 
