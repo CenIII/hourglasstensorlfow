@@ -155,7 +155,7 @@ class HourglassModel():
                 else:
                     # ground truth:[b,4,128,128,3]; output:same size
                     # TODO: change to sum format, change size of gtMAP
-                    self.loss = self.MAE_loss()
+                    self.loss,self.loss_out = self.MAE_loss()
                     # self.loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.output, labels= self.gtMaps), name= 'cross_entropy_loss')
             lossTime = time.time()	
             print('---Loss : Done (' + str(int(abs(graphTime-lossTime))) + ' sec.)')
@@ -234,7 +234,7 @@ class HourglassModel():
             self.resume['accur'] = []
             self.resume['loss'] = []
             self.resume['err'] = []
-            c = 0.
+            c_out = 0.
             for epoch in range(nEpochs):
                 epochstartTime = time.time()
                 avg_cost = 0.
@@ -247,23 +247,23 @@ class HourglassModel():
                     percent = ((i+1)/epochSize) * 100
                     num = np.int(20*percent/100)
                     tToEpoch = int((time.time() - epochstartTime) * (100 - percent)/(percent))
-                    sys.stdout.write('\r Train: {0}>'.format("="*num) + "{0}>".format(" "*(20-num)) + '||' + str(percent)[:4] + '%' + ' -cost: ' + str(cost)[:6] + ' -avg_loss: ' + str(avg_cost)[:5] + ' -timeToEnd: ' + str(tToEpoch) + ' sec.'+'-loss_batch: '+str(c))
+                    sys.stdout.write('\r Train: {0}>'.format("="*num) + "{0}>".format(" "*(20-num)) + '||' + str(percent)[:4] + '%' + ' -cost: ' + str(cost)[:6] + ' -avg_loss: ' + str(avg_cost)[:5] + ' -timeToEnd: ' + str(tToEpoch) + ' sec.'+'-loss_batch: '+str(c_out))
                     sys.stdout.flush()
                     img_train, gt_train,mask_train = data_gen(batchSize)  #weight_train = next(self.generator) 
                     weight_train = 0
                     if i % saveStep == 0:
                         if self.w_loss:
-                            _, c, summary = self.Session.run([self.train_rmsprop, self.loss, self.train_op], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
+                            _, c,c_out, summary = self.Session.run([self.train_rmsprop, self.loss, self.loss_out,self.train_op], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
                         else:
-                            _, c, summary = self.Session.run([self.train_rmsprop, self.loss, self.train_op], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.mask: mask_train})
+                            _, c,c_out, summary = self.Session.run([self.train_rmsprop, self.loss, self.loss_out,self.train_op], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.mask: mask_train})
                         # Save summary (Loss + Accuracy)
                         self.train_summary.add_summary(summary, epoch*epochSize + i)
                         self.train_summary.flush()
                     else:
                         if self.w_loss:
-                            _, c, = self.Session.run([self.train_rmsprop, self.loss], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
+                            _, c,c_out = self.Session.run([self.train_rmsprop, self.loss,self.loss_out], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
                         else:
-                            _, c, = self.Session.run([self.train_rmsprop, self.loss], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.mask: mask_train})
+                            _, c,c_out = self.Session.run([self.train_rmsprop, self.loss,self.loss_out], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.mask: mask_train})
                     cost += c
                     avg_cost += c/epochSize
                 epochfinishTime = time.time()
@@ -360,6 +360,7 @@ class HourglassModel():
         a = tf.reduce_sum(tf.square(x),3)
         a_m = tf.boolean_mask(a,mask)
         loss = 0
+        tmp = 0
         for i in range(self.nStack):
             y = y_stack[:,i,:,:,:]
             b = tf.reduce_sum(tf.square(y),3)
@@ -370,10 +371,9 @@ class HourglassModel():
             cos_dist = ab_m/tf.sqrt(tf.multiply(a_m,b_m))
             cos_dist = tf.where(tf.is_nan(cos_dist),-1*tf.ones_like(cos_dist),cos_dist)
             cos_dist = tf.clip_by_value(cos_dist,-1,1)
-            
-            loss += tf.reduce_mean(tf.acos(cos_dist))
-        
-        return loss
+            tmp = tf.reduce_mean(tf.acos(cos_dist))
+            loss += tmp
+        return loss,tmp
 
 
     # def _accuracy_computation(self):
