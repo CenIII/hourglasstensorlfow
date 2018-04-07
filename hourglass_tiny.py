@@ -379,7 +379,7 @@ class HourglassModel():
         a12=tf.boolean_mask(tf.reduce_sum(tf.multiply(y,norm_output),3),z_mask)
         cos_dist = tf.clip_by_value(tf.where(tf.is_nan(a12 / tf.sqrt(tf.multiply(a11,a22))), -1*tf.ones_like(a12 / tf.sqrt(tf.multiply(a11,a22))), a12 / tf.sqrt(tf.multiply(a11,a22))), -1, 1)
         loss = tf.reduce_mean(3.1415926/2-(cos_dist+tf.pow(cos_dist,3)/6+tf.pow(cos_dist,5)*3/40+tf.pow(cos_dist,7)*15/336+tf.pow(cos_dist,9)*105/3456))
-     
+        count = loss
         # for i in range(self.nStack):
         #     # y = y_stack[:,i,:,:,:]
 
