@@ -246,7 +246,7 @@ class HourglassModel():
                     percent = ((i+1)/epochSize) * 100
                     num = np.int(20*percent/100)
                     tToEpoch = int((time.time() - epochstartTime) * (100 - percent)/(percent))
-                    sys.stdout.write('\r Train: {0}>'.format("="*num) + "{0}>".format(" "*(20-num)) + '||' + str(percent)[:4] + '%' + ' -cost: ' + str(cost)[:6] + ' -avg_loss: ' + str(avg_cost)[:5] + ' -timeToEnd: ' + str(tToEpoch) + ' sec.')
+                    sys.stdout.write('\r Train: {0}>'.format("="*num) + "{0}>".format(" "*(20-num)) + '||' + str(percent)[:4] + '%' + ' -cost: ' + str(cost)[:6] + ' -avg_loss: ' + str(avg_cost)[:5] + ' -timeToEnd: ' + str(tToEpoch) + ' sec.'+'-loss_batch: '+str(c))
                     sys.stdout.flush()
                     img_train, gt_train,mask_train = data_gen(batchSize)  #weight_train = next(self.generator) 
                     weight_train = 0
@@ -267,12 +267,12 @@ class HourglassModel():
                     avg_cost += c/epochSize
                 epochfinishTime = time.time()
                 #Save Weight (axis = epoch)
-                if self.w_loss:
-                    weight_summary = self.Session.run(self.weight_op, {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
-                else :
-                    weight_summary = self.Session.run(self.weight_op, {self.img : img_train, self.gtMaps: gt_train, self.mask: mask_train})
-                self.train_summary.add_summary(weight_summary, epoch)
-                self.train_summary.flush()
+                # if self.w_loss:
+                #     weight_summary = self.Session.run(self.weight_op, {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
+                # else :
+                #     weight_summary = self.Session.run(self.weight_op, {self.img : img_train, self.gtMaps: gt_train, self.mask: mask_train})
+                # self.train_summary.add_summary(weight_summary, epoch)
+                # self.train_summary.flush()
                 #self.weight_summary.add_summary(weight_summary, epoch)
                 #self.weight_summary.flush()
                 print('Epoch ' + str(epoch) + '/' + str(nEpochs) + ' done in ' + str(int(epochfinishTime-epochstartTime)) + ' sec.' + ' -avg_time/batch: ' + str(((epochfinishTime-epochstartTime)/epochSize))[:4] + ' sec.')
