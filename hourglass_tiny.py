@@ -247,7 +247,8 @@ class HourglassModel():
                     tToEpoch = int((time.time() - epochstartTime) * (100 - percent)/(percent))
                     sys.stdout.write('\r Train: {0}>'.format("="*num) + "{0}>".format(" "*(20-num)) + '||' + str(percent)[:4] + '%' + ' -cost: ' + str(cost)[:6] + ' -avg_loss: ' + str(avg_cost)[:5] + ' -timeToEnd: ' + str(tToEpoch) + ' sec.')
                     sys.stdout.flush()
-                    img_train, gt_train = data_gen(batchSize) #, weight_train = next(self.generator)
+					img_train, gt_train = data_gen(batchSize) #, weight_train = next(self.generator)
+					weight_train = 0
                     if i % saveStep == 0:
                         if self.w_loss:
                             _, c, summary = self.Session.run([self.train_rmsprop, self.loss, self.train_op], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
