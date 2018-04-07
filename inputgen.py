@@ -8,9 +8,11 @@ class SFSDataProvider(object):
     channels = 3
     def __init__(self):
         # super(SFSDataProvider, self).__init__()
-        self._init_data_counter()
+        self.data_counter = 0
         self.images, self.mask, self.normal =self._load_and_format_data()
         self.image_num = self.images.shape[0]
+        self.indx_map = np.random.permutation(self.image_num)
+
     def _load_and_format_data(self):
         color_dir = '/home/shensq/eecs442challenge/train/color/'
         color,_ = self._load_data(color_dir)
@@ -43,13 +45,10 @@ class SFSDataProvider(object):
         data_ = np.array(data_,dtype='f')
         return data_, file_order
 
-    def _init_data_counter(self):
-        self.data_counter=0
-
     def _next_data(self):
-        data = self.images[self.data_counter]
-        label = self.normal[self.data_counter]
-        mask = self.mask[self.data_counter]
+        data = self.images[self.indx_map[self.data_counter]]
+        label = self.normal[self.indx_map[self.data_counter]]
+        mask = self.mask[self.indx_map[self.data_counter]]
         self.data_counter = (self.data_counter+1)%self.image_num
         return data, label, mask
 
@@ -68,6 +67,8 @@ class SFSDataProvider(object):
             X[i] = train_data
             Y[i] = labels
             Z[i] = mask
+        if(self.data_counter<n):
+            self.indx_map = np.random.permutation(self.image_num)
         return X, Y, Z
 
 
