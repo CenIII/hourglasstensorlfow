@@ -262,7 +262,7 @@ class HourglassModel():
                         if self.w_loss:
                             _, c, = self.Session.run([self.train_rmsprop, self.loss], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
                         else:
-                            _, c, = self.Session.run([self.train_rmsprop, self.loss], feed_dict = {self.img : img_train, self.gtMaps: gt_train})
+                            _, c, = self.Session.run([self.train_rmsprop, self.loss], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.mask: mask_train})
                     cost += c
                     avg_cost += c/epochSize
                 epochfinishTime = time.time()
@@ -270,7 +270,7 @@ class HourglassModel():
                 if self.w_loss:
                     weight_summary = self.Session.run(self.weight_op, {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
                 else :
-                    weight_summary = self.Session.run(self.weight_op, {self.img : img_train, self.gtMaps: gt_train})
+                    weight_summary = self.Session.run(self.weight_op, {self.img : img_train, self.gtMaps: gt_train, self.mask: mask_train})
                 self.train_summary.add_summary(weight_summary, epoch)
                 self.train_summary.flush()
                 #self.weight_summary.add_summary(weight_summary, epoch)
@@ -280,18 +280,18 @@ class HourglassModel():
                     self.saver.save(self.Session, os.path.join(os.getcwd(),str(self.name + '_' + str(epoch + 1))))
                 self.resume['loss'].append(cost)
 
-                # Validation Set
-                accuracy_array = np.array([0.0]*len(self.joint_accur))
-                for i in range(validIter):
-                    img_valid, gt_valid, mask_valid = data_gen(batchSize) #, w_valid = next(self.generator)
-                    accuracy_pred = self.Session.run(self.joint_accur, feed_dict = {self.img : img_valid, self.gtMaps: gt_valid})
-                    accuracy_array += np.array(accuracy_pred, dtype = np.float32) / validIter
-                print('--Avg. Accuracy =', str((np.sum(accuracy_array) / len(accuracy_array)) * 100)[:6], '%' )
-                self.resume['accur'].append(accuracy_pred)
-                self.resume['err'].append(np.sum(accuracy_array) / len(accuracy_array))
-                valid_summary = self.Session.run(self.test_op, feed_dict={self.img : img_valid, self.gtMaps: gt_valid})
-                self.test_summary.add_summary(valid_summary, epoch)
-                self.test_summary.flush()
+                # # Validation Set
+                # accuracy_array = np.array([0.0]*len(self.joint_accur))
+                # for i in range(validIter):
+                #     img_valid, gt_valid, mask_valid = data_gen(batchSize) #, w_valid = next(self.generator)
+                #     accuracy_pred = self.Session.run(self.joint_accur, feed_dict = {self.img : img_valid, self.gtMaps: gt_valid})
+                #     accuracy_array += np.array(accuracy_pred, dtype = np.float32) / validIter
+                # print('--Avg. Accuracy =', str((np.sum(accuracy_array) / len(accuracy_array)) * 100)[:6], '%' )
+                # self.resume['accur'].append(accuracy_pred)
+                # self.resume['err'].append(np.sum(accuracy_array) / len(accuracy_array))
+                # valid_summary = self.Session.run(self.test_op, feed_dict={self.img : img_valid, self.gtMaps: gt_valid})
+                # self.test_summary.add_summary(valid_summary, epoch)
+                # self.test_summary.flush()
             print('Training Done')
             print('Resume:' + '\n' + '  Epochs: ' + str(nEpochs) + '\n' + '  n. Images: ' + str(nEpochs * epochSize * batchSize) )
             print('  Final Loss: ' + str(cost) + '\n' + '  Relative Loss: ' + str(100*self.resume['loss'][-1]/(self.resume['loss'][0] + 0.1)) + '%' )
@@ -314,7 +314,7 @@ class HourglassModel():
         out_file.close()
         print('Training Record Saved')
             
-    def training_init(self, data_gen, nEpochs = 10, epochSize = 1000, batchSize=20, saveStep = 500, dataset = None, load = None):
+    def training_init(self, data_gen, nEpochs = 10, epochSize = 1000, batchSize=20, saveStep = 500, load = None):
         """ Initialize the training
         Args:
             nEpochs		: Number of Epochs to train
@@ -371,7 +371,8 @@ class HourglassModel():
             cos_dist = tf.clip_by_value(cos_dist,-1,1)
             
             loss += tf.reduce_mean(tf.acos(cos_dist))
-            
+        
+        return loss
 
 
     # def _accuracy_computation(self):
@@ -423,17 +424,20 @@ class HourglassModel():
         with tf.name_scope('model'):
             with tf.name_scope('preprocessing'):
                 # Input Dim : nbImages x 128 x 128 x inputDim
-                pad1 = tf.pad(inputs, [[0,0],[2,2],[2,2],[0,0]], name='pad_1')
+                pad1 = tf.pad(inputs, [[0,0],[3,3],[3,3],[0,0]], name='pad_1')
                 # Dim pad1 : nbImages x 132 x 132 x inputDim
                 # W-F+2P / S + 1
-                conv1 = self._conv_bn_relu(pad1, filters= 64, kernel_size = 6, strides = 2, name = 'conv_256_to_128')
+                conv1 = self._conv_bn_relu(pad1, filters= 64, kernel_size = 7, strides = 1, name = 'conv_256_to_128')
                 # Dim conv1 : nbImages x 64 x 64 x 64
                 r1 = self._residual(conv1, numOut = 128, name = 'r1')
                 # Dim pad1 : nbImages x 64 x 64 x 128
-                pool1 = tf.contrib.layers.max_pool2d(r1, [2,2], [2,2], padding='VALID')
+
+
+                # pool1 = tf.contrib.layers.max_pool2d(r1, [2,2], [2,2], padding='VALID')
                 # Dim pool1 : nbImages x 32 x 32 x 128
                 if self.tiny:
-                    r3 = self._residual(pool1, numOut=self.nFeat, name='r3')
+                    # r3 = self._residual(pool1, numOut=self.nFeat, name='r3')
+                    r3 = self._residual(r1, numOut=self.nFeat, name='r3')
                 else:
                     r2 = self._residual(pool1, numOut= int(self.nFeat/2), name = 'r2')
                     r3 = self._residual(r2, numOut= self.nFeat, name = 'r3')
