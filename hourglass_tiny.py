@@ -38,7 +38,7 @@ class HourglassModel():
 	Generate TensorFlow model to train and predict Human Pose from images (soon videos)
 	Please check README.txt for further information on model management.
 	"""
-	def __init__(self, nFeat = 512, nStack = 4, nModules = 1, nLow = 4, outputDim = 16, batch_size = 16, drop_rate = 0.2, lear_rate = 2.5e-4, decay = 0.96, decay_step = 2000, dataset = None, training = True, w_summary = True, logdir_train = None, logdir_test = None,tiny = True, attention = False,modif = True,w_loss = False, name = 'tiny_hourglass',  joints = ['r_anckle', 'r_knee', 'r_hip', 'l_hip', 'l_knee', 'l_anckle', 'pelvis', 'thorax', 'neck', 'head', 'r_wrist', 'r_elbow', 'r_shoulder', 'l_shoulder', 'l_elbow', 'l_wrist']):
+	def __init__(self, nFeat = 512, nStack = 4, nModules = 1, nLow = 4, outputDim = 16, batch_size = 16, drop_rate = 0.2, lear_rate = 2.5e-4, decay = 0.96, decay_step = 2000, training = True, w_summary = True, logdir_train = None, logdir_test = None,tiny = True, attention = False,modif = True,w_loss = False, name = 'tiny_hourglass',  joints = ['r_anckle', 'r_knee', 'r_hip', 'l_hip', 'l_knee', 'l_anckle', 'pelvis', 'thorax', 'neck', 'head', 'r_wrist', 'r_elbow', 'r_shoulder', 'l_shoulder', 'l_elbow', 'l_wrist']):
 		""" Initializer
 		Args:
 			nStack				: number of stacks (stage/Hourglass modules)
@@ -74,13 +74,13 @@ class HourglassModel():
 		self.decay_step = decay_step
 		self.nLow = nLow
 		self.modif = modif
-		self.dataset = dataset
+		#self.dataset = dataset
 		self.cpu = '/cpu:0'
 		self.gpu = '/gpu:0'
 		self.logdir_train = logdir_train
 		self.logdir_test = logdir_test
 		self.joints = joints
-		self.w_loss = w_loss
+		self.w_loss = False
 		
 	# ACCESSOR
 	
@@ -137,11 +137,11 @@ class HourglassModel():
 		with tf.device(self.gpu):
 			with tf.name_scope('inputs'):
 				# Shape Input Image - batchSize: None, height: 256, width: 256, channel: 3 (RGB)
-				self.img = tf.placeholder(dtype= tf.float32, shape= (None, 256, 256, 3), name = 'input_img')
+				self.img = tf.placeholder(dtype= tf.float32, shape= (None, 128, 128, 3), name = 'input_img')
 				if self.w_loss:
 					self.weights = tf.placeholder(dtype = tf.float32, shape = (None, self.outDim))
 				# Shape Ground Truth Map: batchSize x nStack x 64 x 64 x outDim
-				self.gtMaps = tf.placeholder(dtype = tf.float32, shape = (None, self.nStack, 64, 64, self.outDim))
+				self.gtMaps = tf.placeholder(dtype = tf.float32, shape = (None,  128, 128, 3))#self.nStack, 128, 128, self.outDim))
 				# TODO : Implement weighted loss function
 				# NOT USABLE AT THE MOMENT
 				#weights = tf.placeholder(dtype = tf.float32, shape = (None, self.nStack, 1, 1, self.outDim))
@@ -217,12 +217,13 @@ class HourglassModel():
 				else:
 					print('Please give a Model in args (see README for further information)')
 	
-	def _train(self, nEpochs = 10, epochSize = 1000, saveStep = 500, validIter = 10):
+	def _train(self, data_gen, nEpochs = 10, epochSize = 1000, batchSize=20, saveStep = 500, validIter = 10):
 		"""
 		"""
 		with tf.name_scope('Train'):
-			self.generator = self.dataset._aux_generator(self.batchSize, self.nStack, normalize = True, sample_set = 'train')
-			self.valid_gen = self.dataset._aux_generator(self.batchSize, self.nStack, normalize = True, sample_set = 'valid')
+			#self.generator = self.dataset._aux_generator(self.batchSize, self.nStack, normalize = True, sample_set = 'train')
+			#self.generator = self.dataset.generator() #TODO: fill the arguments
+			# self.valid_gen = self.dataset._aux_generator(self.batchSize, self.nStack, normalize = True, sample_set = 'valid')
 			startTime = time.time()
 			self.resume = {}
 			self.resume['accur'] = []
@@ -242,7 +243,8 @@ class HourglassModel():
 					tToEpoch = int((time.time() - epochstartTime) * (100 - percent)/(percent))
 					sys.stdout.write('\r Train: {0}>'.format("="*num) + "{0}>".format(" "*(20-num)) + '||' + str(percent)[:4] + '%' + ' -cost: ' + str(cost)[:6] + ' -avg_loss: ' + str(avg_cost)[:5] + ' -timeToEnd: ' + str(tToEpoch) + ' sec.')
 					sys.stdout.flush()
-					img_train, gt_train, weight_train = next(self.generator)
+					#img_train, gt_train, weight_train = next(self.generator)
+					img_train, gt_train = data_gen(batchSize)#next(self.generator)  #TODO:Define batchsize
 					if i % saveStep == 0:
 						if self.w_loss:
 							_, c, summary = self.Session.run([self.train_rmsprop, self.loss, self.train_op], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
@@ -275,7 +277,7 @@ class HourglassModel():
 				# Validation Set
 				accuracy_array = np.array([0.0]*len(self.joint_accur))
 				for i in range(validIter):
-					img_valid, gt_valid, w_valid = next(self.generator)
+					img_valid, gt_valid = data_gen(batchSize) #next(self.generator)
 					accuracy_pred = self.Session.run(self.joint_accur, feed_dict = {self.img : img_valid, self.gtMaps: gt_valid})
 					accuracy_array += np.array(accuracy_pred, dtype = np.float32) / validIter
 				print('--Avg. Accuracy =', str((np.sum(accuracy_array) / len(accuracy_array)) * 100)[:6], '%' )
@@ -306,7 +308,7 @@ class HourglassModel():
 		out_file.close()
 		print('Training Record Saved')
 			
-	def training_init(self, nEpochs = 10, epochSize = 1000, saveStep = 500, dataset = None, load = None):
+	def training_init(self, data_gen, nEpochs = 10, epochSize = 1000, saveStep = 500, dataset = None, load = None):
 		""" Initialize the training
 		Args:
 			nEpochs		: Number of Epochs to train
@@ -325,7 +327,7 @@ class HourglassModel():
 						#	self.saver.restore(self.Session, load)
 					#except Exception:
 						#	print('Loading Failed! (Check README file for further information)')
-				self._train(nEpochs, epochSize, saveStep, validIter=10)
+				self._train(data_gen, nEpochs, epochSize, saveStep, validIter=10)
 	
 	def weighted_bce_loss(self):
 		""" Create Weighted Loss Function
