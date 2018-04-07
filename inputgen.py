@@ -1,9 +1,9 @@
-import numpy as np
+from __future__ import print_function, division, absolute_import, unicode_literals
 import os
-import random
-import time
-from skimage import transform
-import scipy.misc as scm
+import skimage.data
+import numpy as np
+from Net.input_util import BaseDataProvider, normalize_d2f
+from skimage.filters import sobel #, scharr, prewitt,roberts 
 
 
 class SFSDataProvider(object):

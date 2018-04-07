@@ -247,8 +247,8 @@ class HourglassModel():
                     tToEpoch = int((time.time() - epochstartTime) * (100 - percent)/(percent))
                     sys.stdout.write('\r Train: {0}>'.format("="*num) + "{0}>".format(" "*(20-num)) + '||' + str(percent)[:4] + '%' + ' -cost: ' + str(cost)[:6] + ' -avg_loss: ' + str(avg_cost)[:5] + ' -timeToEnd: ' + str(tToEpoch) + ' sec.')
                     sys.stdout.flush()
-					img_train, gt_train = data_gen(batchSize) #, weight_train = next(self.generator)
-					weight_train = 0
+                    img_train, gt_train = data_gen(batchSize)  #weight_train = next(self.generator) 
+                    weight_train = 0
                     if i % saveStep == 0:
                         if self.w_loss:
                             _, c, summary = self.Session.run([self.train_rmsprop, self.loss, self.train_op], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
@@ -260,7 +260,7 @@ class HourglassModel():
                     else:
                         if self.w_loss:
                             _, c, = self.Session.run([self.train_rmsprop, self.loss], feed_dict = {self.img : img_train, self.gtMaps: gt_train, self.weights: weight_train})
-                        else:	
+                        else:
                             _, c, = self.Session.run([self.train_rmsprop, self.loss], feed_dict = {self.img : img_train, self.gtMaps: gt_train})
                     cost += c
                     avg_cost += c/epochSize
@@ -519,7 +519,7 @@ class HourglassModel():
                 if self.modif:
                     return tf.nn.sigmoid(tf.stack(out, axis= 1 , name= 'stack_output'),name = 'final_output')
                 else:
-                    return tf.stack(out, axis= 1 , name = 'final_output')		
+                    return tf.stack(out, axis= 1 , name = 'final_output')
                         
                 
     def _conv(self, inputs, filters, kernel_size = 1, strides = 1, pad = 'VALID', name = 'conv'):
