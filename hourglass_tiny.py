@@ -161,7 +161,7 @@ class HourglassModel():
             print('---Loss : Done (' + str(int(abs(graphTime-lossTime))) + ' sec.)')
 
     # Calculate accuracy ?
-        # with tf.device(self.cpu):
+        with tf.device(self.cpu):
         #     with tf.name_scope('accuracy'):
         #         self._accuracy_computation()
             accurTime = time.time()
