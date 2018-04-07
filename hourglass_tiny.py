@@ -364,7 +364,16 @@ class HourglassModel():
         tmp = 0
         count = 0.
         for i in range(self.nStack):
-            y = y_stack[:,i,:,:,:]
+            # y = y_stack[:,i,:,:,:]
+
+            output = y_stack[:,i,:,:,:]
+            output = (output/255.0-0.5)*2
+            output_mask = tf.abs(output) < 1e-5
+            output_no0 = tf.where(output_mask, 1e-5*tf.ones_like(output), output)
+            norm_factor = tf.expand_dims(tf.sqrt(tf.reduce_sum(tf.square(output_no0),3)), -1)
+            y = tf.divide(output_no0,norm_factor)
+
+
             b = tf.reduce_sum(tf.square(y),3)
             ab = tf.reduce_sum(tf.multiply(x,y),3)
             b_m = tf.boolean_mask(b,mask)
