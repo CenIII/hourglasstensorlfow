@@ -247,7 +247,7 @@ class HourglassModel():
                     tToEpoch = int((time.time() - epochstartTime) * (100 - percent)/(percent))
                     sys.stdout.write('\r Train: {0}>'.format("="*num) + "{0}>".format(" "*(20-num)) + '||' + str(percent)[:4] + '%' + ' -cost: ' + str(cost)[:6] + ' -avg_loss: ' + str(avg_cost)[:5] + ' -timeToEnd: ' + str(tToEpoch) + ' sec.')
                     sys.stdout.flush()
-                    img_train, gt_train,mask_train = data_gen(batchSize)  #weight_train = next(self.generator) 
+                    img_train, gt_train = data_gen(batchSize)  #weight_train = next(self.generator) 
                     weight_train = 0
                     if i % saveStep == 0:
                         if self.w_loss:
@@ -282,7 +282,7 @@ class HourglassModel():
                 # Validation Set
                 accuracy_array = np.array([0.0]*len(self.joint_accur))
                 for i in range(validIter):
-                    img_valid, gt_valid, mask_valid = data_gen(batchSize) #, w_valid = next(self.generator)
+                    img_valid, gt_valid = data_gen(batchSize) #, w_valid = next(self.generator)
                     accuracy_pred = self.Session.run(self.joint_accur, feed_dict = {self.img : img_valid, self.gtMaps: gt_valid})
                     accuracy_array += np.array(accuracy_pred, dtype = np.float32) / validIter
                 print('--Avg. Accuracy =', str((np.sum(accuracy_array) / len(accuracy_array)) * 100)[:6], '%' )
@@ -352,13 +352,13 @@ class HourglassModel():
         """
         x = self.gtMaps
         y_stack = self.output
-        mask = self.img[:,:,:,1]
-        mask = (mask==1)
-        
+        mask = self.mask
+        mask = tf.not_equal(mask,tf.zeros_like(mask))
+
         a = tf.reduce_sum(tf.square(x),3)
         a_m = tf.boolean_mask(a,mask)
         loss = 0
-        for i in range(nStack):
+        for i in range(self.nStack):
             y = y_stack[:,i,:,:,:]
             b = tf.reduce_sum(tf.square(y),3)
             ab = tf.reduce_sum(tf.multiply(x,y),3)
