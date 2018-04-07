@@ -369,11 +369,16 @@ class HourglassModel():
             ab_m = tf.boolean_mask(ab,mask)
             
             cos_dist = ab_m/tf.sqrt(tf.multiply(a_m,b_m))
+
+            # assign 1 if it is NAN
+            count = tf.where(tf.is_nan(cos_dist),tf.ones_like(cos_dist),tf.zeros_like(cos_dist))
+            count = tf.count_nonzero(count)
             cos_dist = tf.where(tf.is_nan(cos_dist),-1*tf.ones_like(cos_dist),cos_dist)
+
             cos_dist = tf.clip_by_value(cos_dist,-1,1)
             tmp = tf.reduce_mean(tf.acos(cos_dist))
             loss += tmp
-        return loss,tmp
+        return loss,count
 
 
     # def _accuracy_computation(self):
