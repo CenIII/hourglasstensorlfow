@@ -39,7 +39,7 @@ class HourglassModel():
     Generate TensorFlow model to train and predict Human Pose from images (soon videos)
     Please check README.txt for further information on model management.
     """
-    def __init__(self, nFeat = 128, nStack = 4, nLow = 4, inputDim = 3,outputDim = 3, batch_size = 20, drop_rate = 0.2, lear_rate = 2.5e-4, decay = 0.96, decay_step = 2000, training = True, w_summary = True, logdir_train = None, logdir_test = None,tiny = True,modif = False,w_loss = False, name = 'tiny_hourglass'):
+    def __init__(self, nFeat = 128, nStack = 4, nLow = 4, inputDim = 3,outputDim = 3, batch_size = 20, drop_rate = 0.2, lear_rate = 2.5e-4, decay = 0.96, decay_step = 2000, training = True, w_summary = True, logdir_train = None, logdir_test = None,tiny = False,modif = False,w_loss = False, name = 'tiny_hourglass'):
         """ Initializer
         Args:
             nStack				: number of stacks (stage/Hourglass modules)
