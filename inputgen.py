@@ -59,7 +59,7 @@ class SFSDataProvider(object):
         ox,oy,oz = labels.shape
         X = np.zeros((n, ix, iy, iz))
         Y = np.zeros((n, ox, oy, oz))
-        Z = np.zeros((n, ox, oy, 1))
+        Z = np.zeros((n, ox, oy))
         X[0] = train_data
         Y[0] = labels
         Z[0] = mask
