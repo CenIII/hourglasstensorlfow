@@ -44,7 +44,8 @@ if __name__ == '__main__':
 	
 	data_gen = DataGenerator()
 
-	model = HourglassModel(nFeat=params['nfeats'], nStack=params['nstacks'], nModules=params['nmodules'], nLow=params['nlow'], outputDim=params['num_joints'], batch_size=params['batch_size'], attention = params['mcam'],training=True, drop_rate= params['dropout_rate'], lear_rate=params['learning_rate'], decay=params['learning_rate_decay'], decay_step=params['decay_step'], name=params['name'], logdir_train=params['log_dir_train'], logdir_test=params['log_dir_test'], tiny= params['tiny'], w_loss=params['weighted_loss'] , joints= params['joint_list'],modif=False)
+	model = HourglassModel(nFeat=params['nfeats'], nStack=params['nstacks'], outputDim=params['num_joints'], batch_size=params['batch_size'], training=True, drop_rate= params['dropout_rate'], lear_rate=params['learning_rate'], decay=params['learning_rate_decay'], decay_step=params['decay_step'], name=params['name'], logdir_train=params['log_dir_train'], logdir_test=params['log_dir_test'], tiny= params['tiny'],  modif=False) # w_loss=params['weighted_loss'] ,joints= params['joint_list'],nModules=params['nmodules'], 
+	#nLow=params['nlow'],attention = params['mcam'],
 	model.generate_model()
 	model.training_init(data_gen, nEpochs=params['nepochs'], epochSize=params['epoch_size'], saveStep=params['saver_step'], dataset = None)
 	

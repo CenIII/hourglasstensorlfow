@@ -49,22 +49,26 @@ class SFSDataProvider(object):
     def _next_data(self):
         data = self.images[self.data_counter]
         label = self.normal[self.data_counter]
+        mask = self.mask[self.data_counter]
         self.data_counter = (self.data_counter+1)%self.image_num
-        return data, label
+        return data, label, mask
 
     def __call__(self, n):
-        train_data, labels = self._next_data()
+        train_data, labels, mask = self._next_data()
         ix,iy,iz = train_data.shape
         ox,oy,oz = labels.shape
         X = np.zeros((n, ix, iy, iz))
         Y = np.zeros((n, ox, oy, oz))
+        Z = np.zeros((n, ox, oy, 1))
         X[0] = train_data
         Y[0] = labels
+        Z[0] = mask
         for i in range(1, n):
-            train_data, labels = self._next_data()
+            train_data, labels, mask = self._next_data()
             X[i] = train_data
             Y[i] = labels
-        return X, Y
+            Z[i] = mask
+        return X, Y, Z
 
 
 def normalize_d2f(image):
