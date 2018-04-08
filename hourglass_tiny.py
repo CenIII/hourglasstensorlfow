@@ -32,6 +32,7 @@ import numpy as np
 import sys
 import datetime
 import os
+from PIL import Image
 
 class HourglassModel():
     """ HourglassModel class: (to be renamed)
