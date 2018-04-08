@@ -42,7 +42,7 @@ if __name__ == '__main__':
 	# dataset._randomize()
 	# dataset._create_sets()
 
-	training = False
+	training = True
 	data_dir = "/home/chuancen/PJDATA/"
 
 	model_load_dir = "/home/chuancen/PJDATA/model/tiny_hourglass_20"
