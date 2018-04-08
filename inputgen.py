@@ -6,21 +6,21 @@ from skimage.filters import sobel #, scharr, prewitt,roberts
 
 class SFSDataProvider(object):
     channels = 3
-    def __init__(self):
+    def __init__(self, data_dir):
         # super(SFSDataProvider, self).__init__()
         self.data_counter = 0
-        self.images, self.mask, self.normal, self.file_order =self._load_and_format_data()
+        self.images, self.mask, self.normal, self.file_order =self._load_and_format_data(data_dir)
         self.image_num = self.images.shape[0]
         self.indx_map = np.random.permutation(self.image_num)
 
-    def _load_and_format_data(self):
-        color_dir = '/home/chuancen/PJDATA/test/color/'
+    def _load_and_format_data(self, data_dir):
+        color_dir = str(data_dir+"color/")
         color, file_order = self._load_data(color_dir)
 
-        mask_dir = '/home/chuancen/PJDATA/test/mask/'
+        mask_dir = str(data_dir+"mask/")
         mask,_ = self._load_data(mask_dir)
 
-        normal_dir = '/home/chuancen/PJDATA/test/color/'
+        normal_dir = str(data_dir+"normal/")
         normal,_ = self._load_data(normal_dir)
 
         images = np.zeros((len(color),128,128,3),dtype='f')

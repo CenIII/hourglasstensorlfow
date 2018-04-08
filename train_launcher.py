@@ -41,15 +41,20 @@ if __name__ == '__main__':
 	# dataset._create_train_table()
 	# dataset._randomize()
 	# dataset._create_sets()
-	
-	data_gen = DataGenerator()
+
 	training = False
+	data_dir = "/home/chuancen/PJDATA/"
+
+	model_load_dir = "/home/chuancen/PJDATA/model/tiny_hourglass_8"
+	save_dir = "/home/chuancen/PJDATA/test/normal"
 
 	if training==True:
+		data_gen = DataGenerator(str(data_dir+"train/"))
 		model = HourglassModel(nFeat=256, nStack=4, nLow=4, outputDim=3, batch_size=16,training=True, drop_rate=0.2, lear_rate=2.5*1e-4, decay=0.96, decay_step=1000,logdir_train='./logdir_train', logdir_test='./logdir_test', tiny=True, w_loss=False,modif=False)
 		model.generate_model()
 		model.training_init(data_gen, nEpochs = 50, epochSize = 1000, batchSize=16, saveStep = 500, load = None)
 	else:
+		data_gen = DataGenerator(str(data_dir+"test/"))
 		model_test = HourglassModel(nFeat=256, nStack=4, nLow=4, outputDim=3, batch_size=16,training=False, drop_rate=0.2, lear_rate=2.5*1e-4, decay=0.96, decay_step=1000,logdir_train='./logdir_train', logdir_test='./logdir_test', tiny=True, w_loss=False,modif=False)
 		model_test.generate_model()
-		model_test.test_init(data_gen, load = "/home/chuancen/PJDATA/model/tiny_hourglass_8", save = "/home/chuancen/PJDATA/test/normal")
+		model_test.test_init(data_gen, load = model_load_dir, save = save_dir)
