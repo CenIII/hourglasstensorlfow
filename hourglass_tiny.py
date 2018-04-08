@@ -253,7 +253,7 @@ class HourglassModel():
                     image= np.divide(image,np.expand_dims(np.sqrt(norm_factor),-1))
                     image = (image/2+0.5)*255
 
-                    image = np.multiply(image,np.expand_dims(mask/255,-1))
+                    image = np.multiply(image,np.expand_dims(mask/255,-1))[0]
 
                     f = Image.fromarray(image.astype(np.uint8))
                     f.save(os.path.join(save, order[i]))
