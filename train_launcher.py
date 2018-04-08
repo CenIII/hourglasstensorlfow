@@ -46,7 +46,7 @@ if __name__ == '__main__':
 	data_dir = "/home/chuancen/PJDATA/"
 
 	model_load_dir = "/home/chuancen/PJDATA/model/tiny_hourglass_8"
-	save_dir = "/home/chuancen/hourglasstensorlfow/normal/"
+	save_dir = "/home/chuancen/PJDATA/test/normal/"
 	shutil.rmtree(save_dir,ignore_errors=True)
 	os.mkdir(save_dir)
 
