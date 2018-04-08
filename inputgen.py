@@ -11,7 +11,8 @@ class SFSDataProvider(object):
         self.data_counter = 0
         self.images, self.mask, self.normal, self.file_order =self._load_and_format_data(data_dir)
         self.image_num = self.images.shape[0]
-
+        self.indx_map = np.random.permutation(self.image_num)
+        
     def _load_and_format_data(self, data_dir):
         color_dir = str(data_dir+"color/")
         color, file_order = self._load_data(color_dir)
