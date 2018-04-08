@@ -9,18 +9,18 @@ class SFSDataProvider(object):
     def __init__(self):
         # super(SFSDataProvider, self).__init__()
         self.data_counter = 0
-        self.images, self.mask, self.normal =self._load_and_format_data()
+        self.images, self.mask, self.normal, self.file_order =self._load_and_format_data()
         self.image_num = self.images.shape[0]
         self.indx_map = np.random.permutation(self.image_num)
 
     def _load_and_format_data(self):
-        color_dir = '/home/shensq/eecs442challenge/train/color/'
-        color,_ = self._load_data(color_dir)
+        color_dir = '/home/chuancen/PJDATA/test/color/'
+        color, file_order = self._load_data(color_dir)
 
-        mask_dir = '/home/shensq/eecs442challenge/train/mask/'
+        mask_dir = '/home/chuancen/PJDATA/test/mask/'
         mask,_ = self._load_data(mask_dir)
 
-        normal_dir = '/home/shensq/eecs442challenge/train/normal'
+        normal_dir = '/home/chuancen/PJDATA/test/color/'
         normal,_ = self._load_data(normal_dir)
 
         images = np.zeros((len(color),128,128,3),dtype='f')
@@ -31,7 +31,7 @@ class SFSDataProvider(object):
         # mask_ = np.zeros((len(color),128,128,1),dtype='f')
         # mask_[...,0] = mask != 0
         normal = normalize_d2f(normal)
-        return images, mask, normal
+        return images, mask, normal, file_order
 
     def _load_data(self, data_dir):
         data_ = []

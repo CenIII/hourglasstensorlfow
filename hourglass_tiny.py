@@ -222,17 +222,9 @@ class HourglassModel():
                     print('Model Loaded (', time.time() - t,' sec.)')
                 else:
                     print('Please give a Model in args (see README for further information)')
- 
-    def _test(self,data_gen,batchSize = 16):
-        with tf.name_scope("test"):
-            img_test, gt_test,mask_test = data_gen(batchSize)
-            weight_train = 0
-            _, loss_total,loss_final = self.Session.run([self.train_rmsprop, self.loss, self.loss_out], feed_dict = {self.img : img_test, self.gtMaps: gt_test, self.mask: mask_test})
 
-            print("Cost of all layers:"+str(loss_total))
-            print("Cost of the last layer: "+str(loss_final))
     
-    def test_init(self, data_gen, nEpochs = 1, epochSize = 1000, batchSize=20, saveStep = 500, load = None):
+    def test_init(self, data_gen, load = None, save = None):
         """ Initialize the training
         Args:
             nEpochs		: Number of Epochs to train
@@ -241,6 +233,7 @@ class HourglassModel():
             dataset		: Data Generator (see generator.py)
             load			: Model to load (None if training from scratch) (see README for further information)
         """
+        order = data_gen.file_order
         with tf.name_scope('Session'):
             with tf.device(self.gpu):
                 self._init_weight()
@@ -248,7 +241,22 @@ class HourglassModel():
                 if load is not None:
                     self.saver.restore(self.Session, load)
 
-                self._test(data_gen,batchSize)
+                for i in range(2000):
+                    img_test, _, mask_test = data_gen(1)
+                    img_out.append(self.Session.run([self.output], feed_dict = {self.img : img_test, self.mask: mask_test}))
+                    image = np.asarray(img_test)
+                    mask = np.asarray(mask_test)
+                    # image = image[0,0,...]
+                    image = (image/255.0-0.5)*2
+                    norm_factor = np.square(image).sum(axis=2)
+                    image= np.divide(image,np.expand_dims(np.sqrt(norm_factor),-1))
+                    image = (image/2+0.5)*255
+
+                    image = np.multiply(image,np.expand_dims(mask/255,-1))
+
+                    f = Image.fromarray(image.astype(np.uint8))
+                    f.save(os.path.join(save, order[i]))
+        return 0
 
     def _train(self, data_gen, nEpochs = 10, epochSize = 1000, batchSize=20, saveStep = 500, validIter = 10):
         """
