@@ -47,21 +47,27 @@ class SFSDataProvider(object):
 
     def _next_data(self):
         data = self.images[self.indx_map[self.data_counter]]
-        label = self.normal[self.indx_map[self.data_counter]]
         mask = self.mask[self.indx_map[self.data_counter]]
+        if(self.normal.shape[0]!=0):
+            label = self.normal[self.indx_map[self.data_counter]]
         self.data_counter = (self.data_counter+1)%self.image_num
         return data, label, mask
 
     def __call__(self, n):
         train_data, labels, mask = self._next_data()
         ix,iy,iz = train_data.shape
-        ox,oy,oz = labels.shape
         X = np.zeros((n, ix, iy, iz))
-        Y = np.zeros((n, ox, oy, oz))
         Z = np.zeros((n, ox, oy))
         X[0] = train_data
-        Y[0] = labels
         Z[0] = mask
+
+        if(labels.shape[0]!=0):
+            ox,oy,oz = labels.shape
+            Y = np.zeros((n, ox, oy, oz))
+            Y[0] = labels
+        else:
+            Y = 0
+
         for i in range(1, n):
             train_data, labels, mask = self._next_data()
             X[i] = train_data

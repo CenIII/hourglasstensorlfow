@@ -255,7 +255,7 @@ class HourglassModel():
                     image = np.multiply(image,np.expand_dims(mask/255,-1))
 
                     f = Image.fromarray(image.astype(np.uint8))
-                    f.save(os.path.join(save, order[i]))
+                    f.save(os.path.join(save, order[data_gen.indx_map[i]]))
         return 0
 
     def _train(self, data_gen, nEpochs = 10, epochSize = 1000, batchSize=20, saveStep = 500, validIter = 10):
