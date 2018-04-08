@@ -50,6 +50,8 @@ class SFSDataProvider(object):
         mask = self.mask[self.indx_map[self.data_counter]]
         if(self.normal.shape[0]!=0):
             label = self.normal[self.indx_map[self.data_counter]]
+        else:
+            label = []
         self.data_counter = (self.data_counter+1)%self.image_num
         return data, label, mask
 
