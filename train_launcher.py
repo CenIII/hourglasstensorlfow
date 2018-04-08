@@ -7,6 +7,7 @@ TRAIN LAUNCHER
 from hourglass_tiny import HourglassModel
 from inputgen import SFSDataProvider, SFSTestDataProvider
 import shutil
+import os
 # def process_config(conf_file):
 # 	"""
 # 	"""
