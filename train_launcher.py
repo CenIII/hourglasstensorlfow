@@ -5,7 +5,7 @@ TRAIN LAUNCHER
 
 # import configparser
 from hourglass_tiny import HourglassModel
-from inputgen import SFSDataProvider
+from inputgen import SFSDataProvider, SFSTestDataProvider
 
 # def process_config(conf_file):
 # 	"""
