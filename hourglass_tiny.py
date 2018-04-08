@@ -244,7 +244,7 @@ class HourglassModel():
                 for i in range(2000):
                     img_test, mask_test = data_gen(1)
                     img_out = self.Session.run([self.output], feed_dict = {self.img : img_test, self.mask: mask_test})
-                    image = np.asarray(img_out)
+                    image = np.asarray(img_out[0][0][3])
                     mask = np.asarray(mask_test)
                     # image = image[0,0,...]
                     image = (image/255.0-0.5)*2
