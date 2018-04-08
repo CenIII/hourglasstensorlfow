@@ -6,7 +6,7 @@ TRAIN LAUNCHER
 # import configparser
 from hourglass_tiny import HourglassModel
 from inputgen import SFSDataProvider, SFSTestDataProvider
-
+import shutil
 # def process_config(conf_file):
 # 	"""
 # 	"""
@@ -35,7 +35,6 @@ from inputgen import SFSDataProvider, SFSTestDataProvider
 if __name__ == '__main__':
 	# print('--Parsing Config File')
 	# params = process_config('config.cfg')
-	
 	print('--Creating Dataset')
 	# dataset = DataGenerator(params['joint_list'], params['img_directory'], params['training_txt_file'], remove_joints=params['remove_joints'])
 	# dataset._create_train_table()
@@ -46,7 +45,9 @@ if __name__ == '__main__':
 	data_dir = "/home/chuancen/PJDATA/"
 
 	model_load_dir = "/home/chuancen/PJDATA/model/tiny_hourglass_8"
-	save_dir = "/home/chuancen/PJDATA/test/normal"
+	save_dir = "/home/chuancen/hourglasstensorlfow/normal/"
+	shutil.rmtree(save_dir)
+	os.mkdir(save_dir)
 
 	if training==True:
 		data_gen = SFSDataProvider(str(data_dir+"train/"))
