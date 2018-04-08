@@ -59,7 +59,7 @@ class SFSDataProvider(object):
         train_data, labels, mask = self._next_data()
         ix,iy,iz = train_data.shape
         X = np.zeros((n, ix, iy, iz))
-        Z = np.zeros((n, ox, oy))
+        Z = np.zeros((n, ix, iy))
         X[0] = train_data
         Z[0] = mask
 
