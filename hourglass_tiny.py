@@ -276,6 +276,8 @@ class HourglassModel():
                 avg_cost = 0.
                 cost = 0.
                 print('Epoch :' + str(epoch) + '/' + str(nEpochs) + '\n')
+                # TODO: direct to a new training data folder. 
+                print('Read new training data from folder '+train_path+'...')
                 # Training Set
                 for i in range(epochSize):
                     # DISPLAY PROGRESS BAR
@@ -329,11 +331,13 @@ class HourglassModel():
                 # valid_summary = self.Session.run(self.test_op, feed_dict={self.img : img_valid, self.gtMaps: gt_valid})
                 # self.test_summary.add_summary(valid_summary, epoch)
                 # self.test_summary.flush()
+
             print('Training Done')
             print('Resume:' + '\n' + '  Epochs: ' + str(nEpochs) + '\n' + '  n. Images: ' + str(nEpochs * epochSize * batchSize) )
             print('  Final Loss: ' + str(cost) + '\n' + '  Relative Loss: ' + str(100*self.resume['loss'][-1]/(self.resume['loss'][0] + 0.1)) + '%' )
             print('  Relative Improvement: ' + str((self.resume['err'][-1] - self.resume['err'][0]) * 100) +'%')
             print('  Training Time: ' + str( datetime.timedelta(seconds=time.time() - startTime)))
+
 
     def record_training(self, record):
         """ Record Training Data and Export them in CSV file
