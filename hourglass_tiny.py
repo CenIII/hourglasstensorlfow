@@ -243,7 +243,7 @@ class HourglassModel():
 
                 for i in range(2000):
                     img_test, mask_test = data_gen(1)
-                    img_out = self.Session.run([self.output], feed_dict = {self.img : img_test, self.mask: mask_test}))
+                    img_out = self.Session.run([self.output], feed_dict = {self.img : img_test, self.mask: mask_test})
                     image = np.asarray(img_out)
                     mask = np.asarray(mask_test)
                     # image = image[0,0,...]
