@@ -23,7 +23,7 @@ for i in range(10):
 	os.mkdir(root_dir+"color/output/1")
 	os.mkdir(root_dir+"color/output/2")
 
-	p.sample(200)
+	p.sample(20000)
 	os.rename(root_dir+"color/output/0", root_dir+"color/output/color"+str(i))
 	os.rename(root_dir+"color/output/1", root_dir+"color/output/mask"+str(i))
 	os.rename(root_dir+"color/output/2", root_dir+"color/output/normal"+str(i))
