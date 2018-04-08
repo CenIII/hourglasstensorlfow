@@ -277,7 +277,8 @@ class HourglassModel():
                 cost = 0.
                 print('Epoch :' + str(epoch) + '/' + str(nEpochs) + '\n')
                 # TODO: direct to a new training data folder. 
-                print('Read new training data from folder '+train_path+'...')
+                print('Read new training data from folder...')
+                data_gen.load_new_training_data(epoch)
                 # Training Set
                 for i in range(epochSize):
                     # DISPLAY PROGRESS BAR

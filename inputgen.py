@@ -9,18 +9,30 @@ class SFSDataProvider(object):
     def __init__(self, data_dir):
         # super(SFSDataProvider, self).__init__()
         self.data_counter = 0
-        self.images, self.mask, self.normal, self.file_order =self._load_and_format_data(data_dir)
+        self.data_dir = data_dir
+        # self.images, self.mask, self.normal, self.file_order =self._load_and_format_data(data_dir)
+        # self.image_num = self.images.shape[0]
+        # self.indx_map = np.random.permutation(self.image_num)
+
+    def load_new_training_data(self, count):
+        self.images = []
+        self.mask = [] 
+        self.normal = []
+        self.images, self.mask, self.normal, self.file_order =self._load_and_format_data(data_dir, count)
         self.image_num = self.images.shape[0]
         self.indx_map = np.random.permutation(self.image_num)
 
-    def _load_and_format_data(self, data_dir):
-        color_dir = str(data_dir+"color/")
+    def _load_and_format_data(self, data_dir, count):
+        color_dir = str(data_dir+"color"+str(count)+"/")
+        print("Reading from "+color_dir)
         color, file_order = self._load_data(color_dir)
 
-        mask_dir = str(data_dir+"mask/")
+        mask_dir = str(data_dir+"mask"+str(count)+"/")
+        print("Reading from "+mask_dir)
         mask,_ = self._load_data(mask_dir)
 
-        normal_dir = str(data_dir+"normal/")
+        normal_dir = str(data_dir+"normal"+str(count)+"/")
+        print("Reading from "+normal_dir)
         normal,_ = self._load_data(normal_dir)
 
         images = np.zeros((len(color),128,128,3),dtype='f')
