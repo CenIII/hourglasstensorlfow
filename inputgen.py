@@ -18,7 +18,7 @@ class SFSDataProvider(object):
         self.images = []
         self.mask = [] 
         self.normal = []
-        self.images, self.mask, self.normal, self.file_order =self._load_and_format_data(data_dir, count)
+        self.images, self.mask, self.normal, self.file_order =self._load_and_format_data(self.data_dir, count)
         self.image_num = self.images.shape[0]
         self.indx_map = np.random.permutation(self.image_num)
 
