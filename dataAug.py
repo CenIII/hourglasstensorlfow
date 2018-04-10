@@ -10,7 +10,7 @@ os.mkdir(root_dir+"color/output")
 p = Augmentor.Pipeline(root_dir+"color")
 p.ground_truth(root_dir+"mask",root_dir+"normal")
 
-# p.rotate(probability=0.8, max_left_rotation=25, max_right_rotation=25)
+#p.rotate(probability=0.7, max_left_rotation=25, max_right_rotation=25)
 p.flip_left_right(probability=0.5)
 
 p.flip_top_bottom(probability=0.5)
@@ -18,7 +18,7 @@ p.flip_top_bottom(probability=0.5)
 #p.shift_random(probability=0.5)
 
 
-for i in range(10):
+for i in range(2):
 	os.mkdir(root_dir+"color/output/0")
 	os.mkdir(root_dir+"color/output/1")
 	os.mkdir(root_dir+"color/output/2")
