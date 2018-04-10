@@ -740,42 +740,49 @@ class Translation(Operation):
 
     def image_shift(self, image, random_vert, random_hori, cnt):
         im_arr = np.array(image)
+
         if(cnt!=1):
+            col = []
+            for i in range(120):
+                if(sum(abs(im_arr[0,i,:]-im_arr[0,i+1,:]))==0):
+                    col = im_arr[0,i,:]
+                    break
+
             m,n,z = im_arr.shape
             im_new = np.zeros(im_arr.shape)
             if(random_vert>0):
                 im_new[0:m-random_vert,:,:] = im_arr[random_vert:m,:,:]
-                im_new[m-random_vert:m,:,:] = im_arr[0:random_vert,:,:]
+                im_new[m-random_vert:m,:,:] = np.tile(col, (random_vert,128,1)) #im_arr[0:random_vert,:,:]
             else:
                 im_new[-random_vert:m,:,:] = im_arr[0:m+random_vert,:,:]
-                im_new[0:-random_vert,:,:] = im_arr[m+random_vert:m,:,:]
+                im_new[0:-random_vert,:,:] = np.tile(col, (-random_vert,128,1)) #im_arr[m+random_vert:m,:,:]
 
             im_new2 = np.zeros(im_arr.shape)
 
             if(random_hori>0):
                 im_new2[:,0:m-random_hori,:] = im_new[:,random_hori:m,:]
-                im_new2[:,m-random_hori:m,:] = im_new[:,0:random_hori,:]
+                im_new2[:,m-random_hori:m,:] = np.tile(col, (128,random_hori,1))#im_new[:,0:random_hori,:]
             else:
                 im_new2[:,-random_hori:m,:] = im_new[:,0:m+random_hori,:]
-                im_new2[:,0:-random_hori,:] = im_new[:,m+random_hori:m,:]
+                im_new2[:,0:-random_hori,:] = np.tile(col, (128,-random_hori,1))#im_new[:,m+random_hori:m,:]
         else:
             m,n = im_arr.shape
             im_new = np.zeros(im_arr.shape)
             if(random_vert>0):
                 im_new[0:m-random_vert,:] = im_arr[random_vert:m,:]
-                im_new[m-random_vert:m,:] = im_arr[0:random_vert,:]
+                im_new[m-random_vert:m,:] = np.zeros([random_vert,128]) #im_arr[0:random_vert,:]
             else:
                 im_new[-random_vert:m,:] = im_arr[0:m+random_vert,:]
-                im_new[0:-random_vert,:] = im_arr[m+random_vert:m,:]
+                im_new[0:-random_vert,:] = np.zeros([-random_vert,128]) #im_arr[m+random_vert:m,:]
 
             im_new2 = np.zeros(im_arr.shape)
 
             if(random_hori>0):
                 im_new2[:,0:m-random_hori] = im_new[:,random_hori:m]
-                im_new2[:,m-random_hori:m] = im_new[:,0:random_hori]
+                im_new2[:,m-random_hori:m] = np.zeros([128, random_hori]) #im_new[:,0:random_hori]
             else:
                 im_new2[:,-random_hori:m] = im_new[:,0:m+random_hori]
-                im_new2[:,0:-random_hori] = im_new[:,m+random_hori:m]
+                im_new2[:,0:-random_hori] = np.zeros([128, -random_hori]) #im_new[:,m+random_hori:m]
 
         return Image.fromarray(im_new2.astype('uint8'))
 
