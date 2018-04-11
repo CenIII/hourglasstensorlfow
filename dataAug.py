@@ -15,10 +15,10 @@ p.flip_left_right(probability=0.5)
 
 p.flip_top_bottom(probability=0.5)
 
-#p.shift_random(probability=0.5)
+p.shift_random(probability=0.75)
 
 
-for i in range(2):
+for i in range(3, 5):
 	os.mkdir(root_dir+"color/output/0")
 	os.mkdir(root_dir+"color/output/1")
 	os.mkdir(root_dir+"color/output/2")

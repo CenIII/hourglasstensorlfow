@@ -42,10 +42,10 @@ if __name__ == '__main__':
 	# dataset._randomize()
 	# dataset._create_sets()
 
-	training = True
+	training = False
 	data_dir = "/home/chuancen/PJDATA/"
 
-	model_load_dir = "/home/chuancen/PJDATA/model/tiny_hourglass_10"
+	model_load_dir = "/home/chuancen/PJDATA/model/tiny_hourglass_3"
 	save_dir = "/home/chuancen/PJDATA/test/normal/"
 	shutil.rmtree(save_dir,ignore_errors=True)
 	os.mkdir(save_dir)
@@ -53,11 +53,11 @@ if __name__ == '__main__':
 	if training==True:
 		data_gen = SFSDataProvider(str(data_dir+"train/"))
 		# initial learning rate is 2.5*1e-4
-		model = HourglassModel(nFeat=384, nStack=5, nLow=4, outputDim=3, batch_size=4,training=True, drop_rate=0.2, lear_rate=9*1e-5, decay=0.96, decay_step=10000,logdir_train='./logdir_train', logdir_test='./logdir_test', tiny=False, w_loss=False,modif=False)
+		model = HourglassModel(nFeat=384, nStack=5, nLow=4, outputDim=3, batch_size=4,training=True, drop_rate=0.2, lear_rate=5*1e-5, decay=0.98, decay_step=5000,logdir_train='./logdir_train', logdir_test='./logdir_test', tiny=False, w_loss=False,modif=False)
 		model.generate_model()
-		model.training_init(data_gen, nEpochs = 5, epochSize = 20000, batchSize=4, saveStep = 10000, load = model_load_dir)
+		model.training_init(data_gen, nEpochs = 5, epochSize = 10000, batchSize=4, saveStep = 10000, load = model_load_dir)
 	else:
 		data_gen = SFSTestDataProvider(str(data_dir+"test/"))
-		model_test = HourglassModel(nFeat=384, nStack=5, nLow=4, outputDim=3, batch_size=4,training=False, drop_rate=0.2, lear_rate=9*1e-5, decay=0.95, decay_step=10000,logdir_train='./logdir_train', logdir_test='./logdir_test', tiny=False, w_loss=False,modif=False)
+		model_test = HourglassModel(nFeat=384, nStack=5, nLow=4, outputDim=3, batch_size=4,training=False, drop_rate=0.2, lear_rate=5*1e-5, decay=0.96, decay_step=10000,logdir_train='./logdir_train', logdir_test='./logdir_test', tiny=False, w_loss=False,modif=False)
 		model_test.generate_model()
 		model_test.test_init(data_gen, load = model_load_dir, save = save_dir)
