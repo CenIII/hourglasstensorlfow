@@ -42,10 +42,10 @@ if __name__ == '__main__':
 	# dataset._randomize()
 	# dataset._create_sets()
 
-	training = False
+	training = True
 	data_dir = "/home/chuancen/PJDATA/"
 
-	model_load_dir = "/home/chuancen/PJDATA/model/tiny_hourglass_3"
+	model_load_dir = None #"/home/chuancen/PJDATA/model/tiny_hourglass_3"
 	save_dir = "/home/chuancen/PJDATA/test/normal/"
 	shutil.rmtree(save_dir,ignore_errors=True)
 	os.mkdir(save_dir)
