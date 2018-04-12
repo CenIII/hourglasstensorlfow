@@ -4,7 +4,7 @@ TRAIN LAUNCHER
 """
 
 # import configparser
-from hourglass_tiny import HourglassModel
+from stacked_hourglass import HourglassModel
 from inputgen import SFSDataProvider, SFSTestDataProvider
 import shutil
 import os

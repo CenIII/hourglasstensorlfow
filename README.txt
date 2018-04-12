@@ -17,25 +17,25 @@ I. Data Augmentation
 II. Training
 
 	- Train without pre-trained model
-		In file "train_launcher.py", assign "None" to variable "model_load_dir". Make sure "training=True". Then run
+		In file "launcher.py", assign "None" to variable "model_load_dir". Make sure "training=True". Then run
 		`
-		python3 train_launcher.py
+		python3 launcher.py
 		
 		`
 	- Train with a pre-trained model
-		In file "train_launcher.py", assign the path of your pre-trained model to the variable "model_load_dir". Make sure "training=True". Then run
+		In file "launcher.py", assign the path of your pre-trained model to the variable "model_load_dir". Make sure "training=True". Then run
 		`
-		python3 train_launcher.py
+		python3 launcher.py
 		
 		`
 III. Model saving
 	
-	It will save the trained model everytime an epoch ends. You can decide how big the epoch size is so as to make the saving period shorter or longer. It'll save to './' (where "train_launcher.py" is located) directly. 
+	It will save the trained model everytime an epoch ends. You can decide how big the epoch size is so as to make the saving period shorter or longer. It'll save to './' (where "launcher.py" is located) directly. 
 
 IV. Testing
 
-	Change the variable "training" to "False" in "train_launcher.py". Assign the path of your trained model to the variable "model_load_dir". Run 
+	Change the variable "training" to "False" in "launcher.py". Assign the path of your trained model to the variable "model_load_dir". Run 
 	`
-	python3 train_launcher.py
+	python3 launcher.py
 
 	`
