@@ -84,10 +84,6 @@ class SFSDataProvider(object):
         return X, Y, Z
 
 
-
-
-
-
 class SFSTestDataProvider(object):
     channels = 3
     def __init__(self, data_dir):
