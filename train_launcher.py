@@ -46,7 +46,7 @@ if __name__ == '__main__':
 	data_dir = "/home/chuancen/PJDATA/"
 
 	model_load_dir = None #"/home/chuancen/PJDATA/model/tiny_hourglass_3"
-	save_dir = "/home/chuancen/PJDATA/test/normal/"
+	pred_save_dir = "/home/chuancen/PJDATA/test/normal/"
 	shutil.rmtree(save_dir,ignore_errors=True)
 	os.mkdir(save_dir)
 
@@ -60,4 +60,4 @@ if __name__ == '__main__':
 		data_gen = SFSTestDataProvider(str(data_dir+"test/"))
 		model_test = HourglassModel(nFeat=384, nStack=5, nLow=4, outputDim=3, batch_size=4,training=False, drop_rate=0.2, lear_rate=5*1e-5, decay=0.96, decay_step=10000,logdir_train='./logdir_train', logdir_test='./logdir_test', tiny=False, w_loss=False,modif=False)
 		model_test.generate_model()
-		model_test.test_init(data_gen, load = model_load_dir, save = save_dir)
+		model_test.test_init(data_gen, load = model_load_dir, save = pred_save_dir)
