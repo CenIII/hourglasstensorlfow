@@ -8,7 +8,7 @@ University of Michigan, Ann Arbor
 
 I. Data Augmentation
 
-	In this version, you need to use data augmentor to generate a set of data sets first. To do that, change "root_dirt" in "dataAug.py" to the root path of the original training set, define how many sets of data set you want to generate. Also you can define how the data is going to augmented, such as the probability of shifting and flipping. And then simply run
+	In this version, you need to use data augmentor to generate a set of data sets first. To do that, change "root_dir" in "dataAug.py" to the root path of the original training set, define how many sets of data set you want to generate. Also you can define how the data is going to augmented, such as the probability of shifting and flipping. And then simply run
 	
 	`
 	python3 dataAug.py
@@ -17,13 +17,13 @@ I. Data Augmentation
 II. Training
 
 	- Train without pre-trained model
-		In file "launcher.py", assign "None" to variable "model_load_dir". Make sure "training=True". Then run
+		In file "launcher.py", change "model_load_dir" to "None". Change "data_dir" to the root dir of your training data. Make sure "training=True". Then run
 		`
 		python3 launcher.py
 		
 		`
 	- Train with a pre-trained model
-		In file "launcher.py", assign the path of your pre-trained model to the variable "model_load_dir". Make sure "training=True". Then run
+		In file "launcher.py", change "model_load_dir" to the path of your pre-trained model. Change "data_dir" to the root dir of your training data. Make sure "training=True". Then run
 		`
 		python3 launcher.py
 		
