@@ -1,5 +1,4 @@
 import sys
-# sys.path.insert(0, '/Users/CenIII/Onedrive/School/Umich/442 Computer Vision/HW/Augmentor')
 import Augmentor
 import os
 import shutil

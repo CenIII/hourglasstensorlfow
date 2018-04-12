@@ -5,7 +5,7 @@ TRAIN LAUNCHER
 
 # import configparser
 from stacked_hourglass import HourglassModel
-from inputgen import SFSDataProvider, SFSTestDataProvider
+from input_gen import SFSDataProvider, SFSTestDataProvider
 import shutil
 import os
 # def process_config(conf_file):
