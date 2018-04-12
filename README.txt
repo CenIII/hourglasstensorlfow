@@ -8,10 +8,10 @@ University of Michigan, Ann Arbor
 
 I. Data Augmentation
 
-	In this version, you need to use data augmentor to generate a set of data sets first. To do that, change "root_dir" in "dataAug.py" to the root path of the original training set, define how many sets of data set you want to generate. Also you can define how the data is going to augmented, such as the probability of shifting and flipping. And then simply run
+	In this version, you need to use data augmentor to generate a set of data sets first. To do that, change "root_dir" in "data_augmentor.py" to the root path of the original training set, define how many sets of data set you want to generate. Also you can define how the data is going to augmented, such as the probability of shifting and flipping. And then simply run
 	
 	`
-	python3 dataAug.py
+	python3 data_augmentor.py
 	
 	`
 II. Training
